@@ -46,9 +46,9 @@ class DashboardController extends Controller
         $empId   = session('emp_data')['emp_id'] ?? null;
         $empName = session('emp_data')['emp_name'] ?? null;
 
-        // if (!$empName) {
-        //     return redirect()->route('login'); // fallback
-        // }
+        if (!$empName) {
+            return redirect()->route('login'); // fallback
+        }
 
         $stats = [
             'total' => DB::table('my_activity_list')

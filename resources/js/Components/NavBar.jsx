@@ -37,7 +37,7 @@ export default function NavBar() {
                                     />
                                 </svg>
                                 <span className="mt-[3px]">
-                                    Hello, {emp_data?.emp_firstname}
+                                    Hello, {emp_data?.emp_name}
                                 </span>
                             </div>
 
