@@ -60,13 +60,13 @@ function getStatusBadge(status) {
   if (!status) return <span className="badge bg-secondary text-black">Unknown</span>;
   const lower = status.toLowerCase();
   if (lower.startsWith("ongoing") || lower === "on-going")
-    return <span className="badge bg-info text-black">{status}</span>;
+    return <span className="badge border-info text-info">{status}</span>;
   if (lower === "complete")
     return <span className="badge bg-success text-black">{status}</span>;
   if (lower.startsWith("for engineer approval"))
     return <span className="badge bg-primary text-black">{status}</span>;
   if (lower === "reject")
-    return <span className="badge bg-red-600 text-bold text-black">{status}</span>;
+    return <span className="badge border-red-500 text-red-500">{status}</span>;
   return <span className="badge bg-secondary text-black">{status}</span>;
 }
 export default function Activity({ tableData, tableFilters }) {
@@ -143,7 +143,7 @@ export default function Activity({ tableData, tableFilters }) {
           routeName={route("tech.activity")}
           filters={tableFilters}
           rowKey="id"
-          showExport={true}
+          showExport={false}
           sortBy="id"
           sortOrder="desc"
         />
@@ -153,7 +153,7 @@ export default function Activity({ tableData, tableFilters }) {
   <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-55">
     <div className="bg-gray-900 p-6 rounded-2xl shadow-xl w-[420px]">
       {/* Header */}
-      <div className="flex items-center bg-gradient-to-r from-indigo-600 to-purple-600 p-3 rounded-lg mb-4 text-white">
+      <div className="flex items-center bg-gradient-to-r from-black to-gray-400 p-3 rounded-lg mb-4 text-white">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
              strokeWidth={1.5} stroke="currentColor" className="size-8 mr-2">
           <path strokeLinecap="round" strokeLinejoin="round"
@@ -179,7 +179,13 @@ export default function Activity({ tableData, tableFilters }) {
         ].map(([label, value], idx) => (
           <div key={idx} className="border-b border-gray-700 pb-2">
             <p className="text-gray-400 font-semibold">{label}:</p>
-            <p className="text-white ml-2">{value}</p>
+             <p className="text-white ml-2">
+        {label === "Status"
+          ? getStatusBadge(value)
+          : label === "shift"
+          ? getShiftBadge(value) // 👉 gumamit ng hiwalay na badge kung iba design
+          : value}
+      </p>
           </div>
         ))}
       </div>

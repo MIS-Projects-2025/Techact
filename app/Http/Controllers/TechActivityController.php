@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Services\DataTableService;
+use Illuminate\Support\Facades\DB;
 
 class TechActivityController extends Controller
 {
@@ -30,8 +31,8 @@ class TechActivityController extends Controller
             'mysql',
             'my_activity_list',
             [
-                'searchColumns' => ['emp_name', 'my_activity', 'log_time', 'status'],
-                'exportColumns' => ['i', 'emp_name', 'shift', 'my_activity', 'machine', 'log_time', 'time_out', 'duration', 'status', 'note'],
+                'searchColumns' => ['emp_name', 'shift', 'my_activity', 'machine', 'log_time', 'time_out', 'status', 'note'],
+                'exportColumns' => ['emp_name', 'shift', 'my_activity', 'machine', 'log_time', 'time_out', 'duration', 'status', 'note'],
             ]
         );
 

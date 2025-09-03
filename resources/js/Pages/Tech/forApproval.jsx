@@ -227,7 +227,7 @@ useEffect(() => {
   <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
     <div className="bg-gray-800 p-6 rounded shadow-lg w-1/3">
       <h2 className="text-xl font-bold mb-4 text-gray-200">
-        <div className="flex items-center bg-blue-900 p-2 rounded text-white">
+        <div className="flex items-center bg-gradient-to-r from-black to-gray-400 p-2 rounded text-white">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
             <path strokeLinecap="round" strokeLinejoin="round"

@@ -342,6 +342,39 @@ const handleSubmit = (e) => {
                 </option>
               ))}
             </select>
+            {/* My Activity with datalist */}
+{/* <input
+  list="activityOptions"
+  name="my_activity"
+  value={form.my_activity}
+  onChange={handleChange}
+  className="border p-2 text-gray-700 w-full"
+  placeholder="Select Activity"
+  required
+/>
+<datalist id="activityOptions">
+  {activityOptions.map((activity, idx) => (
+    <option key={idx} value={activity} />
+  ))}
+</datalist> */}
+
+{/* Machine with datalist */}
+{/* <input
+  list="machineOptions"
+  name="machine"
+  value={form.machine}
+  onChange={handleChange}
+  className="border p-2 text-gray-700 w-full"
+  placeholder="Select Machine"
+  required
+/>
+<datalist id="machineOptions">
+  <option value="N/A" />
+  {machineOptions.map((machine_num, idx) => (
+    <option key={idx} value={machine_num} />
+  ))}
+</datalist> */}
+
 
             <input
               name="log_time"
@@ -381,7 +414,7 @@ const handleSubmit = (e) => {
               value={form.note}
               onChange={handleChange}
               placeholder="Note"
-              className="border py-10 text-gray-700"
+              className="border p-4 text-gray-700"
             />
             <button
               type="submit"
@@ -429,13 +462,13 @@ const handleSubmit = (e) => {
   <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
     <div className="bg-gray-800 p-6 rounded shadow-lg w-1/3">
       <h2 className="text-xl font-bold mb-4 text-gray-200">
-        <div className="flex items-center bg-gray-500 p-2 rounded text-white">
+        <div className="flex items-center bg-gradient-to-r from-black to-gray-400 p-2 rounded text-white">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             strokeWidth={1.5} stroke="currentColor" className="size-12">
             <path strokeLinecap="round" strokeLinejoin="round"
               d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0 9-3.75h.008v.008H12V8.25Z" />
           </svg>
-          &nbsp; My Activity
+          &nbsp; My Ongoing Activity
         </div>
       </h2>
 

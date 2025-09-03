@@ -69,7 +69,7 @@ export default function Sidebar() {
                 }}
             >
                 {/* LOGO */}
-                  {["superadmin", "admin"].includes(emp_data?.emp_system_role) && (
+                  {["superadmin", "admin", "moderator", "approver"].includes(emp_data?.emp_system_role) && (
             <div>
                 <Link
                     href={route("dashboard")}
@@ -83,10 +83,10 @@ export default function Sidebar() {
                 </Link>
             </div>
                 )}
-                        {!["superadmin", "admin"].includes(emp_data?.emp_system_role) && (
+                        {!["superadmin", "admin", "moderator", "approver"].includes(emp_data?.emp_system_role) && (
                 <div>
                 <Link
-                    href={route("dashboards")}
+                    href={route("dashboardu")}
                     className="flex items-center pl-[10px] text-lg font-bold"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">

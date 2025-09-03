@@ -36,11 +36,12 @@ Route::get('/techact/forApproval', [OngoingActivityController::class, 'forApprov
 
 Route::put('/techact/forApproval/approve/{id}', [OngoingActivityController::class, 'forApprovalActivity'])->name('ongoing.approve');
 
-Route::get('/techact/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/techact', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::get('/techact', [DashboardController::class, 'index'])->name('dashboards');
+Route::get('/techact/dashboards', [DashboardController::class, 'index'])->name('dashboardu');
 
-Route::get('/dashboards', [DashboardController::class, 'dashboards'])->name('dashboards');
+
+Route::get('/dashboardu', [DashboardController::class, 'dashboardu'])->name('dashboardu');
 
 
 Route::fallback(function () {

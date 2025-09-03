@@ -7,11 +7,15 @@ import { useEffect, useState } from "react";
 
 export default function AuthenticatedLayout({ header, children }) {
     const { url, props } = usePage();
+    // const { emp_data, forApprovalCount } = usePage().props;
+    // console.log(props.emp_data);
+
+    // const role = emp_data?.emp_system_role;
 
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        authCheck();
+        authCheck(); //disable
     }, [url]);
 
     const authCheck = async () => {
@@ -54,12 +58,13 @@ export default function AuthenticatedLayout({ header, children }) {
 
             if (isTokenValid.data.status !== "success") {
                 localStorage.removeItem("authify-token");
-
+                const isAdmin = props.emp_data?.emp_system_role === null ?   route("dashboards") :  route("dashboard");
                 window.location.href = `http://192.168.2.221/authify/public/login?redirect=${encodeURIComponent(
-                    route("dashboard")
+                 isAdmin
                 )}`;
                 return;
             }
+
         } catch (error) {
             console.log("with error", error);
         }

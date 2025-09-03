@@ -75,10 +75,17 @@ class OngoingActivityController extends Controller
                     'machine',
                     'log_time',
                     'time_out',
-                    'duration',
+                    DB::raw("
+        CASE 
+            WHEN TIMESTAMPDIFF(MINUTE, log_time, COALESCE(time_out, NOW())) > 0 
+                THEN CONCAT(TIMESTAMPDIFF(MINUTE, log_time, COALESCE(time_out, NOW())), ' min')
+            ELSE CONCAT(TIMESTAMPDIFF(SECOND, log_time, COALESCE(time_out, NOW())), ' sec')
+        END as duration
+    "),
                     'status',
                     'note'
                 ],
+
             ]
         );
 

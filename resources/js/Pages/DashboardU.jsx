@@ -14,7 +14,7 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, BarController, Title, Tooltip, Legend);
 
-export default function Dashboards() {
+export default function Dashboardu() {
     const { stats, empData, activities } = usePage().props; 
     // ✅ `activities` should be passed from Laravel controller
     // Example: activities: DB::table("my_activity_list")->get()
@@ -24,7 +24,7 @@ export default function Dashboards() {
     const [modalTitle, setModalTitle] = useState("");
     const [filteredData, setFilteredData] = useState([]);
 
-      console.log(filteredData);
+    console.log(filteredData);
 
     useEffect(() => {
         if (chartRef.current) {
@@ -97,7 +97,7 @@ export default function Dashboards() {
     }, [stats, activities]);
 
     return (
-        <>
+        <AuthenticatedLayout>
             <p className="mb-4 font-semibold font-timestamp text-[15pt] text-green-300">
                 Welcome,{" "}
                 <span className="font-semibold text-green-300">
@@ -201,6 +201,6 @@ export default function Dashboards() {
                     </div>
                 </div>
             )}
-        </>
+        </AuthenticatedLayout>
     );
 }

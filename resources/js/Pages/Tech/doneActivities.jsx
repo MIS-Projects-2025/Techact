@@ -205,8 +205,6 @@ useEffect(() => {
     <AuthenticatedLayout>
       <Head title="My Ongoing Activities" />
       <div className="p-6">
-       
-
         <h1 className="text-2xl font-bold mb-4">My Completed Activities</h1>
         <DataTable
           columns={[
@@ -240,15 +238,15 @@ useEffect(() => {
          {/* Modal */}
 {modalOpen && selectedActivity && (
   <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-    <div className="bg-gray-800 p-6 rounded shadow-lg w-1/3">
+    <div className="bg-white p-6 rounded shadow-lg w-1/3">
       <h2 className="text-xl font-bold mb-4 text-gray-200">
-        <div className="flex items-center bg-blue-900 p-2 rounded text-white">
+        <div className="flex items-center bg-gradient-to-r from-black to-gray-400 p-3 rounded text-white">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+            strokeWidth={1.5} stroke="currentColor" className="size-10">
             <path strokeLinecap="round" strokeLinejoin="round"
               d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
           </svg>&nbsp;
-          For Approval Activity Details
+          My Activity Details
         </div>
       </h2>
 
@@ -283,38 +281,38 @@ useEffect(() => {
       {selectedActivity.approver_id ? (
   <>
     <div className="mb-4">
-      <label className="block text-white mb-1">Approver ID</label>
+      <label className="block text-gray-600 mb-1">Approver ID</label>
       <input
         value={selectedActivity.approver_id}
-        className="w-full p-2 rounded border bg-gray-600 text-blue-400"
+        className="w-full p-2 rounded border bg-gradient-to-r from-black to-gray-400 text-blue-400"
         readOnly
       />
     </div>
 
     <div className="mb-4">
-      <label className="block text-white mb-1">Approver Name</label>
+      <label className="block text-gray-600 mb-1">Approver Name</label>
       <input
         value={selectedActivity.approver_name}
-        className="w-full p-2 rounded border bg-gray-600 text-blue-400"
+        className="w-full p-2 rounded border bg-gradient-to-r from-black to-gray-400 text-blue-400"
         readOnly
       />
     </div>
 
     <div className="mb-4">
-      <label className="block text-white mb-1">Date Approved</label>
+      <label className="block text-gray-600 mb-1">Date Approved</label>
       <input
         value={selectedActivity.approve_date}
-        className="w-full p-2 rounded border bg-gray-600 text-blue-400"
+        className="w-full p-2 rounded border bg-gradient-to-r from-black to-gray-400 text-blue-400"
         readOnly
       />
     </div>
 
     {selectedActivity.remarks && (   // 👈 display lang kung may remarks
       <div className="mb-4">
-        <label className="block text-white mb-1">Approver Remarks</label>
+        <label className="block text-gray-600 mb-1">Approver Remarks</label>
         <textarea
           value={selectedActivity.remarks}
-          className="w-full p-3 rounded border text-white bg-gray-600"
+          className="w-full p-3 rounded border text-white bg-gradient-to-r from-black to-gray-400"
           readOnly
         />
       </div>
@@ -325,38 +323,38 @@ useEffect(() => {
     {selectedActivity.rejector_id ? (
   <>
     <div className="mb-4">
-      <label className="block text-white mb-1">Rejector ID</label>
+      <label className="block text-gray-600 mb-1">Rejector ID</label>
       <input
         value={selectedActivity.rejector_id}
-        className="w-full p-2 rounded border bg-gray-600 text-blue-400"
+        className="w-full p-2 rounded border bg-gradient-to-r from-black to-gray-400 text-blue-400"
         readOnly
       />
     </div>
 
     <div className="mb-4">
-      <label className="block text-white mb-1">Rejector Name</label>
+      <label className="block text-gray-600 mb-1">Rejector Name</label>
       <input
         value={selectedActivity.rejector_name}
-        className="w-full p-2 rounded border bg-gray-600 text-blue-400"
+        className="w-full p-2 rounded border bg-gradient-to-r from-black to-gray-400 text-blue-400"
         readOnly
       />
     </div>
 
     <div className="mb-4">
-      <label className="block text-white mb-1">Date Reject</label>
+      <label className="block text-gray-600 mb-1">Date Reject</label>
       <input
         value={selectedActivity.rejected_date}
-        className="w-full p-2 rounded border bg-gray-600 text-blue-400"
+        className="w-full p-2 rounded border bg-gradient-to-r from-black to-gray-400 text-blue-400"
         readOnly
       />
     </div>
 
     {selectedActivity.reject_remarks && (   // 👈 display lang kung may remarks
       <div className="mb-4">
-        <label className="block text-white mb-1">Rejector Remarks</label>
+        <label className="block text-gray-600 mb-1">Rejector Remarks</label>
         <textarea
           value={selectedActivity.reject_remarks}
-           className="w-full p-2 rounded border bg-gray-600 text-blue-400"
+           className="w-full p-2 rounded border bg-gradient-to-r from-black to-gray-400 text-blue-400"
           readOnly
         />
       </div>
@@ -367,41 +365,41 @@ useEffect(() => {
 
         {/* ✅ Activity details */}
         <div className="mb-4">
-          <label className="block text-white mb-1">Activity</label>
+          <label className="block text-gray-600 mb-1">Activity</label>
           <input
             type="text"
             value={selectedActivity.my_activity}
-            className="w-full p-2 rounded border bg-gray-600 text-white"
+            className="w-full p-2 rounded border bg-gradient-to-r from-black to-gray-400 text-white"
             readOnly
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-white mb-1">Machine</label>
+          <label className="block text-gray-600 mb-1">Machine</label>
           <input
             type="text"
             value={selectedActivity.machine}
-            className="w-full p-2 rounded border bg-gray-600 text-white"
+            className="w-full p-2 rounded border bg-gradient-to-r from-black to-gray-400 text-white"
             readOnly
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-white mb-1">Status</label>
+          <label className="block text-gray-600 mb-1">Status</label>
           <input
             type="text"
             value={selectedActivity.statusText}
             style={{ textTransform: "capitalize" }}
-            className="w-full p-2 rounded border bg-blue-500 text-white"
+            className="w-full p-2 rounded border bg-gradient-to-r from-blue-700 to-gray-500 text-white"
             readOnly
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-white mb-1">Note</label>
+          <label className="block text-gray-600 mb-1">Note</label>
           <textarea
             value={selectedActivity.note || ""}
-            className="w-full p-3 rounded border text-white bg-gray-600"
+            className="w-full p-3 rounded border text-white bg-gradient-to-r from-black to-gray-400"
             readOnly
           />
         </div>
@@ -418,7 +416,11 @@ useEffect(() => {
             }}
             className="px-4 py-2 bg-red-600 text-white rounded flex items-center"
           >
-            ❌ Close
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+  <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+</svg>
+
+ Close
           </button>
         </div>
       </form>
