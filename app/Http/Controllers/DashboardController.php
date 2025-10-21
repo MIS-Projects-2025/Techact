@@ -67,46 +67,60 @@ class DashboardController extends Controller
             ->pluck('my_activity');
 
 
-
-
         // 🔹 Breakdown by status for bar chart (today only)
         $todayStatuses = ['complete', 'ongoing', 'on going'];
-        $statusCounts = [];
+        $datasets = [];
 
+        // 🔹 Assign colors per status
+        $statusColors = [
+            'complete' => '#34D399', // green
+            'ongoing' => '#60A5FA',  // blue
+            'on going' => '#FBBF24', // yellow
+        ];
+
+        // 🔹 Loop bawat status para makuha total duration (oras) per activity
         foreach ($todayStatuses as $status) {
-            $count = DB::table('my_activity_list')
-                ->where('emp_name', $empName)
-                ->where('status', $status)
-                ->whereRaw("STR_TO_DATE(log_time, '%b/%d/%Y %H:%i:%s') BETWEEN ? AND ?", [
-                    Carbon::now()->startOfDay()->format('Y-m-d H:i:s'),
-                    Carbon::now()->endOfDay()->format('Y-m-d H:i:s'),
-                ])
-                ->count();
+            $data = [];
 
-            $statusCounts[$status] = $count;
+            foreach ($myActivitiesToday as $activity) {
+                // Compute duration (oras) per activity + status
+                $duration = DB::table('my_activity_list')
+                    ->selectRaw("
+                SUM(
+                    TIME_TO_SEC(
+                        TIMEDIFF(
+                            STR_TO_DATE(time_out, '%b/%d/%Y %H:%i:%s'),
+                            STR_TO_DATE(log_time, '%b/%d/%Y %H:%i:%s')
+                        )
+                    ) / 3600
+                ) AS total_hours
+            ")
+                    ->where('emp_name', $empName)
+                    ->where('status', $status)
+                    ->where('my_activity', $activity)
+                    ->whereRaw("STR_TO_DATE(log_time, '%b/%d/%Y %H:%i:%s') BETWEEN ? AND ?", [
+                        Carbon::now()->startOfDay()->format('Y-m-d H:i:s'),
+                        Carbon::now()->endOfDay()->format('Y-m-d H:i:s'),
+                    ])
+                    ->value('total_hours');
+
+                // Default 0 kung null
+                $data[] = $duration ? round($duration, 2) : 0;
+            }
+
+            $datasets[] = [
+                'label' => ucfirst($status),
+                'data' => $data,
+                'backgroundColor' => $statusColors[$status] ?? '#A78BFA',
+            ];
         }
 
-        // 🔹 Prepare data for stacked bar chart
+        // 🔹 Final bar chart data (grouped, not stacked)
         $barChartData = [
             'labels' => $myActivitiesToday,
-            'datasets' => [
-                [
-                    'label' => 'Completed',
-                    'data' => [$statusCounts['complete']],
-                    'backgroundColor' => '#34D399', // blue
-                ],
-                [
-                    'label' => 'Ongoing',
-                    'data' => [$statusCounts['ongoing']],
-                    'backgroundColor' => '#60A5FA', // green
-                ],
-                [
-                    'label' => 'On Going',
-                    'data' => [$statusCounts['ongoing']],
-                    'backgroundColor' => '#60A5FA', // green
-                ],
-            ],
+            'datasets' => $datasets,
         ];
+
 
 
         $todayStart = Carbon::now()->startOfDay()->format('Y-m-d H:i:s');

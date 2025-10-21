@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { useEffect, useRef } from "react";
 
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function Dashboard({
@@ -34,21 +35,50 @@ export default function Dashboard({
   const adminPerTechChartRef = useRef(null);
 
   // 🔹 Chart Options
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: { position: "bottom" },
-      title: {
-        display: true,
-        text: "Daily Activities Summary (Per Technician)",
-        font: { size: 16 },
+const options = {
+  responsive: true,
+  plugins: {
+    legend: { position: "bottom" },
+    title: {
+      display: true,
+      text: "Daily Activities Summary (Per Technician)",
+      font: { size: 16 },
+    },
+    tooltip: {
+      callbacks: {
+        label: function (context) {
+          const hoursDecimal = context.raw;
+          const totalMinutes = Math.round(hoursDecimal * 60);
+          const hours = Math.floor(totalMinutes / 60);
+          const minutes = totalMinutes % 60;
+          const timeLabel =
+            minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
+          return `${context.dataset.label}: ${timeLabel}`;
+        },
       },
     },
-    scales: {
-      x: { stacked: true },
-      y: { stacked: true, beginAtZero: true },
+  },
+  scales: {
+    x: { stacked: true },
+    y: {
+      stacked: true,
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: "Duration (hours)",
+      },
+      ticks: {
+        callback: function (value) {
+          const totalMinutes = Math.round(value * 60);
+          const hours = Math.floor(totalMinutes / 60);
+          const minutes = totalMinutes % 60;
+          return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
+        },
+      },
     },
-  };
+  },
+};
+
 
   const optionsAdmin = {
     responsive: true,
