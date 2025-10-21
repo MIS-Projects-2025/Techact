@@ -28,6 +28,7 @@ export default function Dashboard({
   barChartData,
   barChartDataAdmin,
   barChartDataAdminPerTechnician,
+  ranked,
 }) {
   const role = emp_data?.emp_system_role;
 
@@ -130,7 +131,7 @@ const options = {
         dataset.backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
       });
       chart.update();
-    }, 3000); // 3 seconds
+    }, 60000); // 60 seconds
 
     return () => clearInterval(interval);
   }, []);
@@ -142,27 +143,77 @@ const options = {
 
       {["superadmin", "admin", "approver"].includes(role) ? (
         <div>
-          <p className="text-gray-600 mb-4">
-            Welcome back, {emp_data?.emp_firstname}!
-          </p>
+  <p className="text-gray-600 mb-4">
+    Welcome back sir, {emp_data?.emp_firstname}!
+  </p>
 
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <SummaryCard title="Total Activities" value={totalActivitiesAdmin} color="bg-cyan-200" />
-            <SummaryCard title="Completed" value={completedActivitiesAdmin} color="bg-sky-200" />
-            <SummaryCard title="Ongoing" value={ongoingActivitiesAdmin} color="bg-emerald-200" />
-            <SummaryCard title="Total Activities Today" value={totalActivitiesTodayAdmin} color="bg-blue-200" />
-          </div>
+  {/* Summary Cards */}
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <SummaryCard title="Total Activities" value={totalActivitiesAdmin} color="bg-cyan-200" />
+    <SummaryCard title="Completed" value={completedActivitiesAdmin} color="bg-sky-200" />
+    <SummaryCard title="Ongoing" value={ongoingActivitiesAdmin} color="bg-emerald-200" />
+    <SummaryCard title="Total Activities Today" value={totalActivitiesTodayAdmin} color="bg-blue-200" />
+  </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
-            <div className="p-4 bg-white rounded-lg shadow text-gray-700 md:grid-cols-1">
-              <Bar ref={adminPerTechChartRef} data={barChartDataAdmin} options={options} />
-            </div>
-            <div className="p-4 bg-white rounded-lg shadow text-gray-700 md:grid-cols-1">
-              <Bar ref={adminPerTechChartRef} data={barChartDataAdminPerTechnician} options={optionsAdmin} />
-            </div>
-          </div>
-        </div>
+  {/* Charts */}
+  <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+    <div className="p-4 bg-white rounded-lg shadow text-gray-700">
+      <Bar ref={adminPerTechChartRef} data={barChartDataAdmin} options={options} />
+    </div>
+    <div className="p-4 bg-white rounded-lg shadow text-gray-700">
+      <Bar ref={adminPerTechChartRef} data={barChartDataAdminPerTechnician} options={optionsAdmin} />
+    </div>
+  </div>
+
+  {/* 🔹 Ranking Section */}
+  <div className="p-4 bg-white rounded-lg shadow text-gray-700 mt-6">
+    <h2 className="text-lg font-semibold mb-4">Fastest Completion Ranking (Today)</h2>
+    <div className="overflow-x-auto">
+      <table className="min-w-full text-sm text-center border border-gray-200">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="py-2 px-4 border">Rank</th>
+            <th className="py-2 px-4 border">Technician</th>
+            <th className="py-2 px-4 border">Avg Completion (mins)</th>
+            <th className="py-2 px-4 border">Total Completed</th>
+            <th className="py-2 px-4 border">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ranked && ranked.length > 0 ? (
+            ranked.map((tech, index) => (
+              <tr
+                key={index}
+                className={`${
+                  tech.rank === 1
+                    ? "bg-green-100 font-bold"
+                    : tech.rank === 2
+                    ? "bg-yellow-100 font-medium"
+                    : tech.rank === 3
+                    ? "bg-orange-100 font-medium"
+                    : "bg-white"
+                } border-b`}
+              >
+                <td className="py-2 px-4 border">{tech.rank}</td>
+                <td className="py-2 px-4 border">{tech.emp_name}</td>
+                <td className="py-2 px-4 border">{parseFloat(tech.avg_completion_minutes).toFixed(2)}</td>
+                <td className="py-2 px-4 border">{tech.total_completed}</td>
+                <td className="py-2 px-4 border">{tech.activity_date}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" className="py-3 text-gray-500 italic">
+                No data available for today.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
       ) : (
         <div>
           <p className="text-gray-600 mb-4">

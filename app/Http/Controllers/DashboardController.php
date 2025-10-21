@@ -259,7 +259,48 @@ class DashboardController extends Controller
             'datasets' => $datasets,
         ];
 
+        // 🔹 Ranking per day based on activity count first, then completion speed
+        $todayStart = Carbon::now()->startOfDay()->format('Y-m-d H:i:s');
+        $todayEnd   = Carbon::now()->endOfDay()->format('Y-m-d H:i:s');
 
+        $ranking = DB::connection('mysql')
+            ->table('my_activity_list')
+            ->select(
+                'emp_name',
+                DB::raw("DATE(STR_TO_DATE(log_time, '%b/%d/%Y %H:%i:%s')) AS activity_date"),
+
+                // ✅ Average completion time (for tie-breaking)
+                DB::raw("
+            CAST(
+                AVG(
+                    TIMESTAMPDIFF(
+                        MINUTE,
+                        STR_TO_DATE(log_time, '%b/%d/%Y %H:%i:%s'),
+                        STR_TO_DATE(time_out, '%b/%d/%Y %H:%i:%s')
+                    )
+                ) AS DECIMAL(10,2)
+            ) AS avg_completion_minutes
+        "),
+
+                // ✅ Earliest completion (for 2nd tie-break)
+                DB::raw("MIN(STR_TO_DATE(time_out, '%b/%d/%Y %H:%i:%s')) AS earliest_completion_time"),
+
+                // ✅ Total completed (main basis for ranking)
+                DB::raw("COUNT(my_activity) AS total_completed")
+            )
+            ->whereRaw("LOWER(status) LIKE 'complete%'")
+            ->whereRaw("STR_TO_DATE(log_time, '%b/%d/%Y %H:%i:%s') BETWEEN ? AND ?", [$todayStart, $todayEnd])
+            ->groupBy('emp_name', DB::raw("DATE(STR_TO_DATE(log_time, '%b/%d/%Y %H:%i:%s'))"))
+            ->orderByDesc('total_completed') // 🥇 Main: more completed = higher rank
+            ->orderBy(DB::raw('avg_completion_minutes + 0'), 'asc') // ⚡ Tie 1: faster avg time
+            ->orderBy('earliest_completion_time', 'asc') // 🕓 Tie 2: earliest finish
+            ->get();
+
+        // 🔹 Assign rank manually (Rank 1 = highest total + fastest)
+        $ranked = $ranking->values()->map(function ($row, $index) {
+            $row->rank = $index + 1;
+            return $row;
+        });
 
 
         return Inertia::render('Dashboard', [
@@ -275,6 +316,7 @@ class DashboardController extends Controller
             'barChartData' => $barChartData,
             'barChartDataAdmin' => $barChartDataAdmin,
             'barChartDataAdminPerTechnician' => $barChartDataAdminPerTechnician,
+            'ranked' => $ranked,
         ]);
     }
 }
