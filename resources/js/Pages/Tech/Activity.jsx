@@ -59,7 +59,7 @@ function getShiftBadge(row) {
 function getStatusBadge(status) {
   if (!status) return <span className="badge bg-secondary text-black">Unknown</span>;
   const lower = status.toLowerCase();
-  if (lower.startsWith("ongoing") || lower === "on-going")
+  if (lower.startsWith("ongoing") || lower === "on-going" || lower === "on going")
     return <span className="badge bg-info text-black">{status}</span>;
   if (lower === "complete")
     return <span className="badge bg-success text-black">{status}</span>;

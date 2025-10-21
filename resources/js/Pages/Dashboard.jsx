@@ -1,69 +1,166 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { useEffect, useRef } from "react";
 
-export default function Dashboard() {
-    const { empData, stats } = usePage().props;
-     const { emp_data } = usePage().props;
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-    return (
-        
-        <AuthenticatedLayout>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                {/* Total Count */}
-                <div className="bg-white shadow rounded-xl p-4 flex items-center">
-                    <span className="bg-gray-600 p-3 rounded-full mr-3">
-                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 text-white">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.242 5.992h12m-12 6.003H20.24m-12 5.999h12M4.117 7.495v-3.75H2.99m1.125 3.75H2.99m1.125 0H5.24m-1.92 2.577a1.125 1.125 0 1 1 1.591 1.59l-1.83 1.83h2.16M2.99 15.745h1.125a1.125 1.125 0 0 1 0 2.25H3.74m0-.002h.375a1.125 1.125 0 0 1 0 2.25H2.99" />
-                        </svg>
-                    </span>
-                    <div className="flex-1">
-                        <p className="text-md text-gray-600 text-bold">Total Count of Activity</p>
-                        <p className="text-xl font-semibold text-black text-bold">{stats.total}</p>
-                    </div>
-                </div>
+export default function Dashboard({
+  totalActivities,
+  completedActivities,
+  ongoingActivities,
+  totalActivitiesToday,
+  totalActivitiesAdmin,
+  completedActivitiesAdmin,
+  ongoingActivitiesAdmin,
+  totalActivitiesTodayAdmin,
+  emp_data,
+  barChartData,
+  barChartDataAdmin,
+  barChartDataAdminPerTechnician,
+}) {
+  const role = emp_data?.emp_system_role;
 
-                {/* Complete */}
-                <div className="bg-white shadow rounded-xl p-4 flex items-center">
-                   <span className="bg-gray-600 p-3 rounded-full mr-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 text-white">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75" />
-                        </svg>
-                    </span>
-                    <div className="flex-1">
-                        <p className="text-md text-gray-600 text-bold">Complete</p>
-                        <p className="text-xl font-semibold text-black text-bold">{stats.complete}</p>
-                    </div>
-                </div>
+  // 🟢 Add references for your charts
+  const adminPerTechChartRef = useRef(null);
 
-                {/* Ongoing */}
-                <div className="bg-white shadow rounded-xl p-4 flex items-center">
-                  <span className="bg-gray-600 p-3 rounded-full mr-3">
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 text-white">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                        </svg>
+  // 🔹 Chart Options
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: { position: "bottom" },
+      title: {
+        display: true,
+        text: "Daily Activities Summary (Per Technician)",
+        font: { size: 16 },
+      },
+    },
+    scales: {
+      x: { stacked: true },
+      y: { stacked: true, beginAtZero: true },
+    },
+  };
 
-                    </span>
-                    <div className="flex-1">
-                        <p className="text-md text-gray-600 text-bold">Ongoing</p>
-                        <p className="text-xl font-semibold text-black text-bold">{stats.ongoing}</p>
-                    </div>
-                </div>
+  const optionsAdmin = {
+    responsive: true,
+    plugins: {
+      legend: { position: "bottom" },
+      title: {
+        display: true,
+        text: "Daily Activity Duration per Technician",
+        font: { size: 16 },
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            const hoursDecimal = context.raw;
+            const totalMinutes = Math.round(hoursDecimal * 60);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            return `${context.dataset.label}: ${hours}h ${minutes}m`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: { stacked: true },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        title: { display: true, text: "Duration (hours)" },
+        ticks: {
+          callback: function (value) {
+            const totalMinutes = Math.round(value * 60);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            if (minutes === 0) return `${hours}h`;
+            return `${hours}h ${minutes}m`;
+          },
+        },
+      },
+    },
+  };
 
-                {/* Approved Count */}
-                <div className="bg-white shadow rounded-xl p-4 flex items-center">
-                    <span className="bg-gray-600 p-3 rounded-full mr-3">
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 text-white">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-</svg>
+  // 🕒 Auto-change bar colors every 10 seconds
+  useEffect(() => {
+    const chart = adminPerTechChartRef.current;
+    if (!chart) return;
 
+    const interval = setInterval(() => {
+      chart.data.datasets.forEach((dataset) => {
+        dataset.backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+      });
+      chart.update();
+    }, 3000); // 3 seconds
 
-                    </span>
-                    <div className="flex-1">
-                        <p className="text-md text-gray-600 text-bold">Approved Count</p>
-                        <p className="text-xl font-semibold text-black text-bold">{stats.approved}</p>
-                    </div>
-                </div>
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <AuthenticatedLayout>
+      <Head title="Dashboard" />
+      <h1 className="text-2xl font-bold">Dashboard</h1>
+
+      {["superadmin", "admin", "approver"].includes(role) ? (
+        <div>
+          <p className="text-gray-600 mb-4">
+            Welcome back, {emp_data?.emp_firstname}!
+          </p>
+
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <SummaryCard title="Total Activities" value={totalActivitiesAdmin} color="bg-cyan-200" />
+            <SummaryCard title="Completed" value={completedActivitiesAdmin} color="bg-sky-200" />
+            <SummaryCard title="Ongoing" value={ongoingActivitiesAdmin} color="bg-emerald-200" />
+            <SummaryCard title="Total Activities Today" value={totalActivitiesTodayAdmin} color="bg-blue-200" />
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+            <div className="p-4 bg-white rounded-lg shadow text-gray-700 md:grid-cols-1">
+              <Bar ref={adminPerTechChartRef} data={barChartDataAdmin} options={options} />
             </div>
-        </AuthenticatedLayout>
-    );
+            <div className="p-4 bg-white rounded-lg shadow text-gray-700 md:grid-cols-1">
+              <Bar ref={adminPerTechChartRef} data={barChartDataAdminPerTechnician} options={optionsAdmin} />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <p className="text-gray-600 mb-4">
+            Welcome back, {emp_data?.emp_firstname}! Here are your activities.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <SummaryCard title="Total Activities" value={totalActivities} color="bg-cyan-200" />
+            <SummaryCard title="Completed" value={completedActivities} color="bg-sky-200" />
+            <SummaryCard title="Ongoing" value={ongoingActivities} color="bg-emerald-200" />
+            <SummaryCard title="Total Activities Today" value={totalActivitiesToday} color="bg-blue-200" />
+          </div>
+
+          <div className="p-4 bg-white rounded-lg shadow text-gray-700">
+            <Bar data={barChartData} options={options} />
+          </div>
+        </div>
+      )}
+    </AuthenticatedLayout>
+  );
+}
+
+// 🟢 Reusable Summary Card component
+function SummaryCard({ title, value, color }) {
+  return (
+    <div className={`p-4 ${color} rounded-lg shadow text-gray-700`}>
+      <h2 className="text-lg font-semibold">{title}</h2>
+      <p className="text-3xl font-bold flex justify-end">{value}</p>
+    </div>
+  );
 }

@@ -36,13 +36,11 @@ Route::get('/techact/forApproval', [OngoingActivityController::class, 'forApprov
 
 Route::put('/techact/forApproval/approve/{id}', [OngoingActivityController::class, 'forApprovalActivity'])->name('ongoing.approve');
 
-Route::get('/techact/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-Route::get('/techact', [DashboardController::class, 'index'])->name('dashboards');
-
-Route::get('/dashboards', [DashboardController::class, 'dashboards'])->name('dashboards');
+Route::get('/techact', [DashboardController::class, 'index'])->name('dashboard');
 
 
+// fallback
 Route::fallback(function () {
-    return Inertia::render('404');
+    // For Inertia requests, just redirect back to the same URL
+    return redirect()->to(request()->fullUrl());
 })->name('404');

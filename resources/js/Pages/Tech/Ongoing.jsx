@@ -245,7 +245,7 @@ const handleSubmit = (e) => {
           </div>
           </div>
         )}
-
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold mb-4">My Ongoing Activities</h1>
 
         {/* ✅ Toggle Insert Form */}
@@ -254,16 +254,16 @@ const handleSubmit = (e) => {
           className={`px-4 py-2 rounded mb-4 ${
             hasOngoing
               ? "bg-yellow-400 text-red-500 cursor-not-allowed"
-              : "bg-blue-600 text-white"
+              : "bg-green-600 text-white"
           }`}
           disabled={hasOngoing}
         >
           {hasOngoing
-            ? "+ Log New Activity (Ongoing your Task/ Activity)"
+            ? "🚫 You have an ongoing activity !!"
             : "+ Log New Activity"}
         </button>
 
-
+      </div>
 
         {showForm && (
           <form

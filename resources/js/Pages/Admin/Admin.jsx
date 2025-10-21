@@ -89,55 +89,71 @@ export default function Admin({ tableData, tableFilters, emp_data }) {
                 showExport={false}
             >
                 {(row, close) => (
-                    <Modal
-                        id="RowModal"
-                        title={`Admin Details`}
-                        show={true}
-                        onClose={() => tableModalClose(close)}
-                        className="w-[300px]"
-                    >
-                        <p>
-                            <strong>ID:</strong> {row.emp_id}
-                        </p>
-                        <strong>Name:</strong> {row.emp_name}
-                        <p>
-                            <strong>Role:</strong> {row.emp_role}
-                        </p>
-                        {["superadmin", "admin"].includes(
-                            emp_data?.emp_system_role
-                        ) && (
-                            <div>
-                                <select
-                                    defaultValue={row.emp_role}
-                                    onChange={(e) => setRole(e.target.value)}
-                                    className="mt-5 select"
-                                >
-                                    {/* <option value={null}></option> */}
-                                    <option value="superadmin">
-                                        Superadmin
-                                    </option>
-                                    <option value="admin">Admin</option>
-                                    <option value="moderator">Moderator</option>
-                                    <option value="approver">Approver</option>
-                                </select>
+                   <Modal
+    id="RowModal"
+    icon={<i className="fa-solid fa-user-shield"></i>}
+    title="Admin Details"
+    show={true}
+    onClose={() => tableModalClose(close)}
+    className="w-full max-w-md" // 👉 mas malapad kaysa 300px
+>
+    <div className="space-y-4">
+        <div className="bg-gray-50 p-4 rounded-lg border">
+            <p className="text-sm text-gray-500">Employee ID</p>
+            <p className="text-lg font-semibold text-gray-800">
+                {row.emp_id}
+            </p>
+        </div>
 
-                                <div className="flex justify-end gap-1 mt-5">
-                                    <button
-                                        className="text-blue-600 btn"
-                                        onClick={() => changeRole(row.emp_id)}
-                                    >
-                                        Update Role
-                                    </button>
-                                    <button
-                                        className="text-red-600 btn"
-                                        onClick={() => removeAdmin(row.emp_id)}
-                                    >
-                                        Remove
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </Modal>
+        <div className="bg-gray-50 p-4 rounded-lg border">
+            <p className="text-sm text-gray-500">Name</p>
+            <p className="text-lg font-semibold text-gray-800">
+                {row.emp_name}
+            </p>
+        </div>
+
+        <div className="bg-gray-50 p-4 rounded-lg border">
+            <p className="text-sm text-gray-500">Role</p>
+            <p className="text-lg font-semibold text-gray-800 capitalize">
+                {row.emp_role}
+            </p>
+        </div>
+
+        {["superadmin"].includes(emp_data?.emp_system_role) && (
+            <div className="pt-2 border-t">
+                <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Update Role
+                </label>
+                <select
+                    defaultValue={row.emp_role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                    <option value="superadmin">Superadmin</option>
+                    <option value="admin">Admin</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="approver">Approver</option>
+                </select>
+
+                <div className="flex justify-end gap-3 mt-6">
+                    <button
+                        onClick={() => removeAdmin(row.emp_id)}
+                        className="px-4 py-2 text-sm font-semibold text-red-600 border border-red-400 rounded-lg hover:bg-red-50 transition"
+                    >
+                        Remove
+                    </button>
+                    <button
+                        onClick={() => changeRole(row.emp_id)}
+                        className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+                    >
+                        Update Role
+                    </button>
+                </div>
+            </div>
+        )}
+    </div>
+</Modal>
+
                 )}
             </DataTable>
         </AuthenticatedLayout>
