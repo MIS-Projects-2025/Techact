@@ -13,6 +13,8 @@ export default function NavBar() {
         )}&redirect=${encodeURIComponent(route("dashboard"))}`;
     };
 
+      const role = emp_data?.emp_system_role;
+
     return (
         <nav className="">
             <div className="px-4 mx-auto sm:px-6 lg:px-8">
@@ -36,9 +38,15 @@ export default function NavBar() {
                                         clipRule="evenodd"
                                     />
                                 </svg>
+                                {["superadmin", "admin", "approver"].includes(role) ? (
                                 <span className="mt-[3px]">
-                                    Hello, {emp_data?.emp_name}
+                                    Hello Admin, {emp_data?.emp_name}
                                 </span>
+                                 ) : (
+                                <span className="mt-[3px]">
+                                    {emp_data?.emp_name}
+                                </span>
+                                 )}
                             </div>
 
                             <ul

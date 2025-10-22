@@ -80,6 +80,27 @@ export default function Activity({
   machineOptions,
 }) {
 
+   const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+const formatDateTime = (date) => {
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const month = months[date.getMonth()];
+  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear();
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
+};
+
+
   
   const { flash } = usePage().props; // ✅ kunin flash messages galing backend
     // console.log(usePage().props); // ✅ Here!
@@ -473,7 +494,7 @@ const handleSubmit = (e) => {
           <label className="block text-white mb-1">Done Time</label>
           <input
             name="time_out"
-            value={new Date().toLocaleString()}
+           value={formatDateTime(currentTime)}
             className="border p-2 text-green-300 bg-gray-600 w-full mb-2"
             readOnly
           />
@@ -551,21 +572,7 @@ const handleSubmit = (e) => {
             className="px-4 py-2 bg-green-600 text-white rounded"
           >
             <div className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                fill="none" viewBox="0 0 24 24"
-                strokeWidth={1.5} stroke="currentColor"
-                className="size-6">
-                <path strokeLinecap="round" strokeLinejoin="round"
-                  d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 
-                     1.125v17.25c0 .621.504 1.125 
-                     1.125 1.125h12.75c.621 0 1.125-.504 
-                     1.125-1.125v-9M10.125 2.25h.375a9 
-                     9 0 0 1 9 9v.375M10.125 2.25A3.375 
-                     3.375 0 0 1 13.5 5.625v1.5c0 
-                     .621.504 1.125 1.125 1.125h1.5a3.375 
-                     3.375 0 0 1 3.375 3.375M9 15l2.25 
-                     2.25L15 12" />
-              </svg>
+              <i className="fa-solid fa-circle-check mr-2"></i>
               Done
             </div>
           </button>

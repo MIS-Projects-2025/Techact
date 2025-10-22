@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\General;
+namespace App\Http\Controllers\activityGeneral;
 
 use App\Http\Controllers\Controller;
 use App\Services\DataTableService;
@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
-class AdminController extends Controller
+class ActivityController extends Controller
 {
     protected $datatable;
     protected $datatable1;
@@ -22,22 +22,30 @@ class AdminController extends Controller
 
     public function index(Request $request)
     {
+
+        $empData = session('emp_data');
+
+
         $result = $this->datatable->handle(
             $request,
             'mysql',
-            'admin',
+            'activity_list',
             [
-                'searchColumns' => ['EMPNAME', 'EMPLOYID', 'JOB_TITLE', 'DEPARTMENT'],
+                'searchColumns' => ['activity', 'description', 'created_by', 'date_created'],
+                'defaultSort'   => ['id', 'desc'],
             ]
         );
+
+
 
         // FOR CSV EXPORTING
         if ($result instanceof \Symfony\Component\HttpFoundation\StreamedResponse) {
             return $result;
         }
 
-        return Inertia::render('EmpActivity/ongoing', [
+        return Inertia::render('Activity/activityList', [
             'tableData' => $result['data'],
+            'empData' => $empData,
             'tableFilters' => $request->only([
                 'search',
                 'perPage',
@@ -51,62 +59,26 @@ class AdminController extends Controller
         ]);
     }
 
-    public function index_addAdmin(Request $request)
-    {
-        $result = $this->datatable->handle(
-            $request,
-            'masterlist',
-            'employee_masterlist',
-            [
-                'conditions' => function ($query) {
-                    return $query
-                        ->where('ACCSTATUS', 1)
-                        ->whereNot('EMPLOYID', 0);
-                },
 
-                'searchColumns' => ['EMPNAME', 'EMPLOYID', 'JOB_TITLE', 'DEPARTMENT'],
-            ]
-        );
 
-        // FOR CSV EXPORTING
-        if ($result instanceof \Symfony\Component\HttpFoundation\StreamedResponse) {
-            return $result;
-        }
-
-        return Inertia::render('Admin/NewAdmin', [
-            'tableData' => $result['data'],
-            'tableFilters' => $request->only([
-                'search',
-                'perPage',
-                'sortBy',
-                'sortDirection',
-                'start',
-                'end',
-                'dropdownSearchValue',
-                'dropdownFields',
-            ]),
-        ]);
-    }
-
-    public function addAdmin(Request $request)
+    public function store(Request $request)
     {
 
         // dd($request->all());
-        $checkIfExists = DB::table('admin')
-            ->where('emp_id', $request->input('id'))
+        $checkIfExists = DB::table('activity_list')
+            ->where('activity', $request->input('activity'))
             ->exists();
 
         if (!$checkIfExists) {
-            DB::table('admin')
+            DB::table('activity_list')
                 ->insert([
-                    'emp_id' => $request->input('id'),
-                    'emp_name' => $request->input('name'),
-                    'emp_role' => $request->input('role'),
-                    'last_updated_by' => session('emp_data')['emp_id'],
+                    'activity' => $request->input('activity'),
+                    'description' => $request->input('description'),
+                    'created_by' => session('emp_data')['emp_name'],
                 ]);
         }
 
-        return back()->with('success', 'Admin added successfully.');
+        return back()->with('success', 'Activity added successfully.');
     }
 
     public function removeAdmin(Request $request)
@@ -118,26 +90,65 @@ class AdminController extends Controller
         return back()->with('success', 'Admin removed successfully.');
     }
 
-    public function changeAdminRole(Request $request)
+    public function update(Request $request, $id)
     {
-        $id = $request->input('id');
-        $role = $request->input('role');
+        $request->validate([
+            'activity' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+        ]);
 
-        DB::table('admin')
-            ->where('emp_id', $id)
+        DB::table('activity_list')
+            ->where('id', $id)
             ->update([
-                'emp_role' => $role,
-                'last_updated_by' => session('emp_data')['emp_id'],
+                'activity' => $request->activity,
+                'description' => $request->description,
+                'updated_by' => session('emp_data')['emp_name'] ?? 'Unknown',
             ]);
 
-        // Update session data if the current user is the one whose role is being changed
-        if (session('emp_data')['emp_id'] == $id) {
-            $empData = session('emp_data');
-            $empData['emp_system_role'] = $role;
-            session()->put('emp_data', $empData);
+        return back()->with('success', 'Activity updated successfully!');
+    }
+
+    public function destroy($id)
+    {
+        DB::table('activity_list')->where('id', $id)->delete();
+        return back()->with('success', 'Activity deleted successfully!');
+    }
+
+    // ActivityController.php
+    public function getQuarterData(Request $request)
+    {
+        $quarter = $request->input('quarter');
+        $year = $request->input('year');
+        [$start, $end] = $this->getQuarterBounds($quarter, $year);
+
+        $rows = DB::table('my_activity_list')
+            ->whereBetween('date_created', [$start, $end])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json($rows);
+    }
+
+    public function indexExport(Request $request)
+    {
+        return Inertia::render('Activity/QuarterlyExportTool', [
+            'emp_data' => $request->session()->get('emp_data'),
+        ]);
+    }
+
+    private function getQuarterBounds($quarter, $year)
+    {
+        switch ((int)$quarter) {
+            case 1:
+                return ["{$year}-11-03", date('Y-m-d', strtotime("{$year}-02-02 +1 year"))];
+            case 2:
+                return ["{$year}-02-03", "{$year}-05-02"];
+            case 3:
+                return ["{$year}-05-03", "{$year}-08-02"];
+            case 4:
+                return ["{$year}-08-03", "{$year}-11-02"];
+            default:
+                return [null, null];
         }
-
-
-        return back()->with('success', 'Admin role changed successfully.');
     }
 }

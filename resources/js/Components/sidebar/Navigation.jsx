@@ -48,10 +48,30 @@ export default function NavLinks() {
                     icon={<i className="fa-solid fa-thumbs-up"></i>}
                     notifications={forApprovalCount}
                 />
+                
+            )}
+
+            {["superadmin", "admin"].includes(role) && (
+                
+                <SidebarLink
+                    href={route("activity.list")}
+                    label="Activity List"
+                    icon={<i className="fas fa-check-square"></i>}
+                />
+            )}
+
+            {["superadmin", "admin"].includes(role) && (
+                
+                <SidebarLink
+                    href={route("export.activities")}
+                    label="Quarterly Export"
+                    icon={<i className="fas fa-file-csv"></i>}
+                />
             )}
 
             {/* Administrators - Admin only */}
             {["superadmin", "admin"].includes(role) && (
+                
                 <SidebarLink
                     href={route("admin")}
                     label="Administrators"

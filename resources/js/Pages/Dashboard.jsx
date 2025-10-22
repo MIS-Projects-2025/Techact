@@ -167,7 +167,7 @@ const options = {
 
   {/* 🔹 Ranking Section */}
   <div className="p-4 bg-white rounded-lg shadow text-gray-700 mt-6">
-    <h2 className="text-lg font-semibold mb-4">Fastest Completion Ranking (Today)</h2>
+    <h2 className="text-lg font-semibold mb-4"> <i className="fas fa-trophy mr-2"></i>Completion Ranking (Today)</h2>
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm text-center border border-gray-200">
         <thead className="bg-gray-100">

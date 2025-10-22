@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\activityGeneral\ActivityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\General\OngoingController;
@@ -32,11 +33,28 @@ Route::put('/techact/ongoing/update/{id}', [OngoingActivityController::class, 'u
 
 Route::get('/techact/activity', [OngoingController::class, 'index'])->name('activity');
 
+
+
 Route::get('/techact/forApproval', [OngoingActivityController::class, 'forApproval'])->name('tech.forApproval');
 
 Route::put('/techact/forApproval/approve/{id}', [OngoingActivityController::class, 'forApprovalActivity'])->name('ongoing.approve');
 
-Route::get('/techact', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/activity/list', [ActivityController::class, 'index'])->name('activity.list');
+
+Route::post('/activity/add', [ActivityController::class, 'store'])->name('add.activity.list');
+Route::put('/activity/update/{id}', [ActivityController::class, 'update'])->name('update.activity.list');
+Route::delete('/activity/delete/{id}', [ActivityController::class, 'destroy'])->name('delete.activity.list');
+// routes/api.php
+
+Route::get('/export-activities', [ActivityController::class, 'indexExport'])
+    ->name('export.activities');
+
+Route::get('/api/export-activities', [ActivityController::class, 'getQuarterData'])
+    ->name('api.export.activities');
+
+
+
+// Route::get('/techact', [DashboardController::class, 'index'])->name('dashboard');
 
 
 // fallback
